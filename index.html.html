@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beijing & FZS Residential Market Sentiment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --ink: #0f1114;
+    --paper: #f5f3ee;
+    --cream: #edeae2;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --red: #c94040;
+    --green: #3a7d5a;
+    --blue: #2c5282;
+    --muted: #7a7467;
+    --border: #d6d1c4;
+    --card: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2.5rem 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -10px; right: -10px;
+    width: 120px; height: 120px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+  }
+  .header-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  header h1 em { font-style: italic; color: var(--gold); }
+  .header-meta {
+    margin-top: 1rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.78rem;
+    color: rgba(245,243,238,0.55);
+    letter-spacing: 0.05em;
+  }
+  .header-meta span { font-family: 'JetBrains Mono', monospace; }
+
+  /* DAILY SNAPSHOT */
+  .snapshot-bar {
+    background: var(--gold);
+    padding: 0.75rem 3rem;
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+  }
+  .snapshot-item { display: flex; flex-direction: column; }
+  .snapshot-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); opacity: 0.65; }
+  .snapshot-value { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+  .snapshot-date { margin-left: auto; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--ink); opacity: 0.7; }
+
+  /* NAV TABS */
+  .tab-nav {
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem;
+    display: flex;
+    gap: 0;
+  }
+  .tab-btn {
+    padding: 1rem 1.8rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab-btn.active {
+    color: var(--ink);
+    border-bottom: 2px solid var(--gold);
+  }
+  .tab-btn:hover:not(.active) { color: var(--ink); }
+
+  /* MAIN LAYOUT */
+  main { padding: 2.5rem 3rem 4rem; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.3rem;
+  }
+  .section-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 1.8rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* KPI CARDS */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.3rem 1.5rem;
+    position: relative;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--gold);
+  }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-card.blue::before { background: var(--blue); }
+  .kpi-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 1.55rem; font-weight: 600; line-height: 1; }
+  .kpi-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; }
+  .kpi-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    margin-top: 0.4rem;
+  }
+  .badge-up { background: #e8f4ed; color: var(--green); }
+  .badge-down { background: #fdeaea; color: var(--red); }
+
+  /* CHART GRID */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-title {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .chart-title span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: inline-block;
+  }
+  .chart-title span.dot-red { background: var(--red); }
+  .chart-title span.dot-green { background: var(--green); }
+  .chart-title span.dot-blue { background: var(--blue); }
+  .chart-wrap { position: relative; height: 240px; }
+  .chart-wrap.tall { height: 300px; }
+
+  /* INVENTORY GAUGE */
+  .gauge-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .gauge-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .gauge-wrap { position: relative; width: 180px; height: 180px; margin: 1rem auto 0.5rem; }
+  .gauge-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .gauge-months {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .gauge-unit { font-size: 0.72rem; color: var(--muted); }
+  .gauge-status {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    margin-top: 0.75rem;
+  }
+  .status-oversupply { background: #fdeaea; color: var(--red); }
+  .status-balanced { background: #e8f4ed; color: var(--green); }
+
+  /* SECONDARY TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .data-table th {
+    background: var(--cream);
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--cream); }
+  .td-up { color: var(--green); }
+  .td-down { color: var(--red); }
+  .td-label { font-family: 'DM Sans', sans-serif; font-weight: 500; }
+
+  /* TREND INDICATOR */
+  .trend-arrow { font-size: 0.8rem; margin-right: 0.2rem; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 3rem;
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    gap: 2rem;
+  }
+  footer strong { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    header, .snapshot-bar, .tab-nav, main, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .chart-grid, .gauge-section { grid-template-columns: 1fr; }
+    .chart-card.full { grid-column: 1; }
+    header h1 { font-size: 1.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">Market Intelligence Report</div>
+  <h1>Beijing & <em>FZS</em> Residential<br>Market Sentiment</h1>
+  <div class="header-meta">
+    <div>As of <span>April 2026</span></div>
+    <div>Sources: <span>BJ Statistics Survey Office · CREIS</span></div>
+  </div>
+</header>
+
+<div class="snapshot-bar">
+  <div class="snapshot-item">
+    <span class="snapshot-label">BJ Live Inventory</span>
+    <span class="snapshot-value">8,837,184 m²</span>
+  </div>
+  <div class="snapshot-item">
+    <span class="snapshot-label">BJ New Home Signed Today</span>
+    <span class="snapshot-value">48,413 m²</span>
+  </div>
+  <div class="snapshot-item">
+    <span class="snapshot-label">BJ Secondary Signed Today</span>
+    <span class="snapshot-value">120,703 m²</span>
+  </div>
+  <div class="snapshot-item">
+    <span class="snapshot-label">FZS Live Inventory</span>
+    <span class="snapshot-value">328,473 m²</span>
+  </div>
+  <div class="snapshot-date">Live data: 2026-04-01</div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('primary')">① Primary Market</button>
+  <button class="tab-btn" onclick="switchTab('secondary')">② Secondary Market</button>
+</div>
+
+<main>
+
+  <!-- PRIMARY MARKET TAB -->
+  <div class="tab-content active" id="tab-primary">
+    <div class="section-title">Primary (New Home) Market</div>
+    <p class="section-sub">Monthly GFA sold and inventory levels — Beijing whole-city vs FZS (分钟寺) submarket</p>
+
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">BJ Inventory Month</div>
+        <div class="kpi-value">14.6</div>
+        <div class="kpi-sub">months of supply</div>
+        <div class="kpi-badge badge-down">⚠ Oversupply</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">BJ Latest Monthly Sales</div>
+        <div class="kpi-value">332,100</div>
+        <div class="kpi-sub">m² (Feb 2026)</div>
+        <div class="kpi-badge badge-up">▲ +10.9% YoY</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">FZS Inventory Month</div>
+        <div class="kpi-value">31.8</div>
+        <div class="kpi-sub">months of supply</div>
+        <div class="kpi-badge badge-down">⚠ Heavy Oversupply</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">FZS Latest Monthly Sales</div>
+        <div class="kpi-value">4,991</div>
+        <div class="kpi-sub">m² (Mar 2026)</div>
+        <div class="kpi-badge badge-down">▼ -12.5% YoY</div>
+      </div>
+    </div>
+
+    <!-- Inventory Gauges -->
+    <div class="gauge-section">
+      <div class="gauge-card">
+        <div class="chart-title"><span></span> Beijing — Inventory Month (as of Mar 2026)</div>
+        <div class="gauge-wrap">
+          <canvas id="gaugesBJ"></canvas>
+          <div class="gauge-center">
+            <div class="gauge-months">14.6</div>
+            <div class="gauge-unit">months</div>
+          </div>
+        </div>
+        <div class="gauge-status status-oversupply">Oversupply · Healthy = 6–12 months</div>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.8rem;text-align:center;">
+          LTM avg sales: 606,033 m²/mo · Inventory: 8,837,184 m²
+        </p>
+      </div>
+      <div class="gauge-card">
+        <div class="chart-title"><span></span> FZS Submarket — Inventory Month (as of Mar 2026)</div>
+        <div class="gauge-wrap">
+          <canvas id="gaugesFZS"></canvas>
+          <div class="gauge-center">
+            <div class="gauge-months">31.8</div>
+            <div class="gauge-unit">months</div>
+          </div>
+        </div>
+        <div class="gauge-status status-oversupply">Heavy Oversupply · Healthy = 6–12 months</div>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.8rem;text-align:center;">
+          LTM avg sales: 10,340 m²/mo · Inventory: 328,473 m²
+        </p>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card full">
+        <div class="chart-title"><span></span> Beijing — Monthly New Home GFA Sold (m²) with YoY%</div>
+        <div class="chart-wrap tall">
+          <canvas id="bjPrimaryChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title"><span class="dot-red"></span> FZS Submarket — Monthly New Home GFA Sold (m²) & Inventory</div>
+        <div class="chart-wrap tall">
+          <canvas id="fzsPrimaryChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECONDARY MARKET TAB -->
+  <div class="tab-content" id="tab-secondary">
+    <div class="section-title">Secondary (Resale) Market</div>
+    <p class="section-sub">Transaction volume, average unit price, and year-on-year performance — Beijing vs FZS</p>
+
+    <div class="kpi-row">
+      <div class="kpi-card blue">
+        <div class="kpi-label">BJ Latest Avg Price</div>
+        <div class="kpi-value">40,445</div>
+        <div class="kpi-sub">RMB/m² (Feb 2026)</div>
+        <div class="kpi-badge badge-down">▼ -18.1% YoY</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">BJ Latest Volume</div>
+        <div class="kpi-value">660,842</div>
+        <div class="kpi-sub">m² (Feb 2026)</div>
+        <div class="kpi-badge badge-down">▼ -18.1% YoY</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">FZS Latest Avg Price</div>
+        <div class="kpi-value">35,862</div>
+        <div class="kpi-sub">RMB/m² (Feb 2026)</div>
+        <div class="kpi-badge badge-down">▼ -29.0% YoY</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">FZS Latest Volume</div>
+        <div class="kpi-value">2,869</div>
+        <div class="kpi-sub">m² (Feb 2026)</div>
+        <div class="kpi-badge badge-down">▼ YoY decline</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot-blue"></span> BJ Secondary — Monthly GFA Sold (m²)</div>
+        <div class="chart-wrap">
+          <canvas id="bjSecVolChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot-red"></span> BJ Secondary — Avg Unit Price (RMB/m²)</div>
+        <div class="chart-wrap">
+          <canvas id="bjSecPriceChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot-blue"></span> FZS Secondary — Monthly GFA Sold (m²)</div>
+        <div class="chart-wrap">
+          <canvas id="fzsSecVolChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot-red"></span> FZS Secondary — Avg Unit Price (RMB/m²)</div>
+        <div class="chart-wrap">
+          <canvas id="fzsSecPriceChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title"><span></span> YoY% Comparison — BJ vs FZS Secondary (2025 onwards)</div>
+        <div class="chart-wrap">
+          <canvas id="yoyCompareChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Table -->
+    <div class="chart-card" style="margin-top:0;">
+      <div class="chart-title"><span></span> FZS Secondary — Monthly Detail Table</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>GFA Sold (m²)</th>
+            <th>Avg Price (RMB/m²)</th>
+            <th>YoY Volume</th>
+            <th>YoY Price</th>
+          </tr>
+        </thead>
+        <tbody id="fzsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div><strong>Sources:</strong> BJ Statistics Survey Office (new homes) · CREIS (FZS submarket) · BJ Daily Tracker</div>
+  <div><strong>Note:</strong> FZS = 分钟寺 vicinity submarket. Inventory months = current inventory ÷ LTM monthly avg sales.</div>
+</footer>
+
+<script>
+// ============ DATA ============
+const bjPrimary = {
+  labels: ['Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Feb-26'],
+  gfa:    [414700,773500,505400,518500,925800,627500,485600,689900,626200,654100,1221200,299500,960600,500700,563300,899400,374700,451800,567400,626100,637100,1059700,332100],
+  yoy:    [0.1454,0.0322,-0.4906,-0.2275,0.4266,-0.0857,-0.2411,0.1025,0.0351,0.0519,0.0652,-0.2778,0.2419,-0.0093,0.0864,-0.0285,-0.4029,-0.0696,-0.1776,-0.0002,-0.026,-0.1322,0.1088]
+};
+
+const fzsPrimary = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24','Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'],
+  gfa:    [14222,8865,6374,8239,10026,8748,12143,8252,7908,6438,10031,10270,21838,4270,5702,12064,24851,12132,14151,10195,9277,9284,6636,8106,8816,3580,4991],
+  inv:    [156015,141793,188929,182555,174316,164290,155542,143399,135147,127239,120801,110770,223098,201260,244958,239256,259632,345999,333867,340999,330804,321527,352886,346250,340869,332053,328473],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,0.5355,-0.5183,-0.1054,0.4643,1.4787,0.3868,0.1654,0.2355,0.1731,0.4421,-0.3385,-0.2107,-0.5963,-0.1616,-0.1247]
+};
+
+const bjSec = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24','Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'],
+  gfa:    [1093983,556960,1242498,1161097,1190915,1341448,1390716,1292171,1190242,1498454,1673683,2028610,1174894,1076194,1735493,1433421,1319337,1413335,1179854,1240107,1255532,1030882,1165850,1338652,1205319,660842],
+  price:  [53129,53498,52028,49431,47868,50236,49690,49715,47370,47162,49059,50628,50669,49382,49718,47824,46177,46361,44654,43806,43609,41751,41059,38790,38989,40445],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,-0.0463,-0.0769,-0.0444,-0.0325,-0.0353,-0.0771,-0.1013,-0.1189,-0.0794,-0.1147,-0.163,-0.2338,-0.2305,-0.181]
+};
+
+const fzsSec = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24','Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'],
+  gfa:    [5864,2480,3534,4055,4602,4283,4613,5115,5037,5293,6548,9214,4470,3052,6292,5815,8798,5231,3582,3603,4657,4486,4508,5840,3592,2869],
+  price:  [51167,52681,54196,40063,46735,46485,40526,44917,44405,47299,45949,49360,42594,50522,42886,42015,42463,40819,36177,39149,42947,41261,41688,30514,38537,35862],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,-0.1676,-0.041,-0.2087,0.0487,-0.0914,-0.1219,-0.1073,-0.1284,-0.0328,-0.1277,-0.0927,-0.3818,-0.0952,-0.2902]
+};
+
+// ============ COLORS ============
+const gold = '#c9a84c';
+const goldA = 'rgba(201,168,76,0.15)';
+const red = '#c94040';
+const redA = 'rgba(201,64,64,0.15)';
+const blue = '#2c5282';
+const blueA = 'rgba(44,82,130,0.12)';
+const green = '#3a7d5a';
+const greenA = 'rgba(58,125,90,0.15)';
+const muted = '#7a7467';
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = muted;
+Chart.defaults.plugins.legend.display = false;
+
+function pct(v) { return v == null ? null : Math.round(v*1000)/10; }
+function fmt(v) { if(v==null) return '—'; return v.toLocaleString(); }
+
+// ============ GAUGE CHARTS ============
+function drawGauge(id, months, max) {
+  const fraction = Math.min(months / max, 1);
+  const healthyEnd = 12 / max;
+  const ctx = document.getElementById(id).getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [fraction, 1 - fraction],
+        backgroundColor: [months > 18 ? red : months > 12 ? gold : green, '#e8e4db'],
+        borderWidth: 0,
+        circumference: 270,
+        rotation: 225
+      }]
+    },
+    options: {
+      cutout: '72%',
+      plugins: { legend: { display: false }, tooltip: { enabled: false } },
+      animation: { animateRotate: true, duration: 1000 }
+    }
+  });
+}
+
+drawGauge('gaugesBJ', 14.6, 30);
+drawGauge('gaugesFZS', 31.8, 40);
+
+// ============ BJ PRIMARY ============
+new Chart(document.getElementById('bjPrimaryChart'), {
+  type: 'bar',
+  data: {
+    labels: bjPrimary.labels,
+    datasets: [
+      { label: 'GFA Sold (m²)', data: bjPrimary.gfa, backgroundColor: goldA, borderColor: gold, borderWidth: 1.5, yAxisID: 'y' },
+      { label: 'YoY %', data: bjPrimary.yoy.map(v => v==null?null:v*100), type: 'line', borderColor: red, backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, pointBackgroundColor: red, yAxisID: 'y1', tension: 0.3 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 11 }, color: muted, boxWidth: 12 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw.toLocaleString()} m²` : `YoY: ${c.raw?.toFixed(1)}%` } }
+    },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 10 } } },
+      y: { grid: { color: '#e8e4db' }, ticks: { callback: v => (v/1000).toFixed(0)+'k' }, title: { display: true, text: 'm²', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => v.toFixed(0)+'%' }, title: { display: true, text: 'YoY %', font: { size: 10 } } }
+    }
+  }
+});
+
+// ============ FZS PRIMARY ============
+new Chart(document.getElementById('fzsPrimaryChart'), {
+  type: 'bar',
+  data: {
+    labels: fzsPrimary.labels,
+    datasets: [
+      { label: 'GFA Sold (m²)', data: fzsPrimary.gfa, backgroundColor: redA, borderColor: red, borderWidth: 1.5, yAxisID: 'y' },
+      { label: 'Inventory (m²)', data: fzsPrimary.inv, type: 'line', borderColor: blue, backgroundColor: blueA, borderWidth: 2, pointRadius: 2, fill: false, yAxisID: 'y1', tension: 0.3 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 11 }, color: muted, boxWidth: 12 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw?.toLocaleString()} m²` : `Inv: ${c.raw?.toLocaleString()} m²` } }
+    },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 10 } } },
+      y: { grid: { color: '#e8e4db' }, ticks: { callback: v => v.toLocaleString() }, title: { display: true, text: 'Sold m²', font: { size: 10 } } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: v => (v/1000).toFixed(0)+'k' }, title: { display: true, text: 'Inventory m²', font: { size: 10 } } }
+    }
+  }
+});
+
+// ============ BJ SECONDARY VOLUME ============
+new Chart(document.getElementById('bjSecVolChart'), {
+  type: 'bar',
+  data: {
+    labels: bjSec.labels,
+    datasets: [{ data: bjSec.gfa, backgroundColor: bjSec.gfa.map((v,i) => i < 12 ? blueA : (bjSec.yoy[i]||0) < 0 ? redA : greenA), borderColor: bjSec.gfa.map((v,i) => i < 12 ? blue : (bjSec.yoy[i]||0) < 0 ? red : green), borderWidth: 1.5 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { tooltip: { callbacks: { label: c => `${c.raw.toLocaleString()} m²` } } },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: '#e8e4db' }, ticks: { callback: v => (v/10000).toFixed(0)+'万' } }
+    }
+  }
+});
+
+// ============ BJ SECONDARY PRICE ============
+new Chart(document.getElementById('bjSecPriceChart'), {
+  type: 'line',
+  data: {
+    labels: bjSec.labels,
+    datasets: [{ data: bjSec.price, borderColor: blue, backgroundColor: blueA, fill: true, borderWidth: 2.5, pointRadius: 3, tension: 0.35 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { tooltip: { callbacks: { label: c => `¥${c.raw.toLocaleString()}/m²` } } },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: '#e8e4db' }, min: 35000, ticks: { callback: v => '¥'+v.toLocaleString() } }
+    }
+  }
+});
+
+// ============ FZS SECONDARY VOLUME ============
+new Chart(document.getElementById('fzsSecVolChart'), {
+  type: 'bar',
+  data: {
+    labels: fzsSec.labels,
+    datasets: [{ data: fzsSec.gfa, backgroundColor: fzsSec.gfa.map((v,i) => i < 12 ? blueA : redA), borderColor: fzsSec.gfa.map((v,i) => i < 12 ? blue : red), borderWidth: 1.5 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { tooltip: { callbacks: { label: c => `${c.raw.toLocaleString()} m²` } } },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: '#e8e4db' }, ticks: { callback: v => v.toLocaleString() } }
+    }
+  }
+});
+
+// ============ FZS SECONDARY PRICE ============
+new Chart(document.getElementById('fzsSecPriceChart'), {
+  type: 'line',
+  data: {
+    labels: fzsSec.labels,
+    datasets: [{ data: fzsSec.price, borderColor: red, backgroundColor: redA, fill: true, borderWidth: 2.5, pointRadius: 3, tension: 0.35 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { tooltip: { callbacks: { label: c => `¥${c.raw.toLocaleString()}/m²` } } },
+    scales: {
+      x: { grid: { color: '#e8e4db' }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: '#e8e4db' }, min: 28000, ticks: { callback: v => '¥'+v.toLocaleString() } }
+    }
+  }
+});
+
+// ============ YoY COMPARE ============
+const yoyLabels = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26'];
+const bjYoySlice  = bjSec.yoy.slice(12).map(v=>v==null?null:+(v*100).toFixed(1));
+const fzsYoySlice = fzsSec.yoy.slice(12).map(v=>v==null?null:+(v*100).toFixed(1));
+
+new Chart(document.getElementById('yoyCompareChart'), {
+  type: 'bar',
+  data: {
+    labels: yoyLabels,
+    datasets: [
+      { label: 'BJ YoY% (GFA)', data: bjYoySlice, backgroundColor: blueA, borderColor: blue, borderWidth: 1.5 },
+      { label: 'FZS YoY% (GFA)', data: fzsYoySlice, backgroundColor: redA, borderColor: red, borderWidth: 1.5 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 11 }, boxWidth: 12 } },
+      tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.raw?.toFixed(1)}%` } }
+    },
+    scales: {
+      x: { grid: { color: '#e8e4db' } },
+      y: { grid: { color: '#e8e4db' }, ticks: { callback: v => v+'%' } }
+    }
+  }
+});
+
+// ============ FZS TABLE ============
+const tbody = document.getElementById('fzsTable');
+const fzsSecPriceArr = [51167,52681,54196,40063,46735,46485,40526,44917,44405,47299,45949,49360,42594,50522,42886,42015,42463,40819,36177,39149,42947,41261,41688,30514,38537,35862];
+const prev12Price = fzsSecPriceArr.slice(0,12);
+fzsSec.labels.slice(12).forEach((label, i) => {
+  const gi = i + 12;
+  const vol = fzsSec.gfa[gi];
+  const prevVol = fzsSec.gfa[i];
+  const price = fzsSec.price[gi];
+  const prevPrice = fzsSec.price[i];
+  const volChg = prevVol > 0 ? ((vol - prevVol) / prevVol * 100) : null;
+  const priceChg = prevPrice > 0 ? ((price - prevPrice) / prevPrice * 100) : null;
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td class="td-label">${label}</td>
+    <td>${vol.toLocaleString()}</td>
+    <td>¥${price.toLocaleString()}</td>
+    <td class="${volChg >= 0 ? 'td-up' : 'td-down'}">${volChg == null ? '—' : (volChg >= 0 ? '▲' : '▼') + ' ' + Math.abs(volChg).toFixed(1) + '%'}</td>
+    <td class="${priceChg >= 0 ? 'td-up' : 'td-down'}">${priceChg == null ? '—' : (priceChg >= 0 ? '▲' : '▼') + ' ' + Math.abs(priceChg).toFixed(1) + '%'}</td>
+  `;
+  tbody.appendChild(row);
+});
+
+// ============ TABS ============
+function switchTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
