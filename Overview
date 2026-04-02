@@ -1,0 +1,7 @@
+# Beijing RE Data Daily Tracker
+
+## Overview
+
+Automated daily scraper for Beijing real estate data from the official Housing and Urban-Rural
+Development Commission website. Captures residential inventory and transaction figures, computes
+summary metrics, and persists to a styled Excel file.
