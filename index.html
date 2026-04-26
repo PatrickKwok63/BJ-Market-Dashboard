@@ -3,185 +3,839 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Greater China RE & Macro Weekly | 20 – 26 Apr 2026</title>
+<title>Beijing & FZS Residential Market Sentiment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; margin: 40px 60px; line-height: 1.5; }
-  h1 { font-size: 16pt; font-weight: bold; color: #1f3864; margin-bottom: 4px; }
-  h2 { font-size: 13pt; font-weight: bold; color: #1f3864; border-bottom: 2px solid #1f3864; padding-bottom: 4px; margin-top: 28px; margin-bottom: 8px; }
-  .subtitle { font-size: 10pt; color: #666; margin-bottom: 24px; }
-  ul { margin: 4px 0 10px 0; padding-left: 20px; }
-  li { margin-bottom: 3px; }
-  li ul { margin-top: 2px; margin-bottom: 2px; }
-  li ul li { margin-bottom: 1px; }
-  b { color: #1a1a1a; }
-  .note { font-size: 9pt; color: #888; margin-top: 40px; border-top: 1px solid #ddd; padding-top: 8px; }
+  :root {
+    --ink: #0f1114;
+    --paper: #f5f3ee;
+    --cream: #edeae2;
+    --gold: #c9a84c;
+    --gold-light: #e8d5a3;
+    --red: #c94040;
+    --green: #3a7d5a;
+    --blue: #2c5282;
+    --muted: #7a7467;
+    --border: #d6d1c4;
+    --card: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 2.5rem 3rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 50%;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -10px; right: -10px;
+    width: 120px; height: 120px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+  }
+  .header-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    line-height: 1.15;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  header h1 em { font-style: italic; color: var(--gold); }
+  .header-meta {
+    margin-top: 1rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.78rem;
+    color: rgba(245,243,238,0.55);
+    letter-spacing: 0.05em;
+  }
+  .header-meta span { font-family: 'JetBrains Mono', monospace; }
+
+  /* MAIN LAYOUT */
+  main { padding: 2.5rem 3rem 4rem; }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+  }
+  .section-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    padding: 0.2rem 0.7rem;
+    border-radius: 2px;
+  }
+  .section-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── WEEKLY SNAPSHOT TABLE ── */
+  .weekly-wrapper {
+    background: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .weekly-meta {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .weekly-meta-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .weekly-meta-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(245,243,238,0.55);
+  }
+
+  .weekly-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .weekly-table th {
+    background: var(--cream);
+    padding: 0.65rem 1.2rem;
+    text-align: right;
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .weekly-table th:first-child { text-align: left; }
+  .weekly-table td {
+    padding: 0.55rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .weekly-table td:first-child {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-align: left;
+    color: var(--ink);
+  }
+  .weekly-table tr:last-child td { border-bottom: none; }
+  .weekly-table tr:hover td { background: var(--paper); }
+
+  /* Market group header row */
+  .weekly-table .group-header td {
+    background: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 0.5rem 1.2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+  .weekly-table .group-header.fzs td {
+    background: var(--ink);
+    color: var(--gold);
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+
+  /* Metric category sub-header */
+  .weekly-table .sub-header td {
+    background: var(--paper);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.4rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Value cell coloring */
+  .val-up { color: var(--red); }    /* Chinese convention: red = up */
+  .val-down { color: var(--green); } /* green = down */
+  .val-neutral { color: var(--ink); }
+  .val-empty {
+    color: var(--border);
+    font-size: 0.7rem;
+  }
+  .val-pct {
+    font-size: 0.72rem;
+    opacity: 0.8;
+  }
+
+  /* ── MONTHLY SECTION ── */
+  .monthly-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+  .monthly-grid.full { grid-template-columns: 1fr; }
+
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+  }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-title {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .chart-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .chart-title .dot.red { background: var(--red); }
+  .chart-title .dot.blue { background: var(--blue); }
+  .chart-title .dot.green { background: var(--green); }
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-wrap.sm { height: 220px; }
+
+  /* Year legend strip */
+  .year-legend {
+    display: flex;
+    gap: 1.4rem;
+    align-items: center;
+    margin-bottom: 1.4rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .year-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .year-swatch {
+    width: 14px; height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  /* Section divider between Primary and Secondary */
+  .market-section + .market-section {
+    margin-top: 2.8rem;
+    padding-top: 2.2rem;
+    border-top: 2px solid var(--border);
+  }
+  .market-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .market-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 3rem;
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    gap: 2rem;
+  }
+  footer strong { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    header, main, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .monthly-grid { grid-template-columns: 1fr; }
+    .chart-card.full { grid-column: 1; }
+    header h1 { font-size: 1.7rem; }
+  }
 </style>
 </head>
 <body>
 
-<h1>Greater China Real Estate & Macro Weekly</h1>
-<div class="subtitle">Coverage Period: 20 – 26 April 2026 &nbsp;|&nbsp; Published: 26 April 2026</div>
+<header>
+  <div class="header-label">Market Intelligence Report</div>
+  <h1>Beijing & <em>FZS</em> Residential<br>Market Sentiment</h1>
+  <div class="header-meta">
+    <div>As of <span id="reportDate">April 19, 2026</span></div>
+    <div>Sources: <span>BJ Statistics Survey Office · CREIS</span></div>
+  </div>
+</header>
 
-<!-- ============================================================ -->
-<h2>Hong Kong Macro News</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>DBS Economics: HK Economy Poised for Dual-Speed Recovery in 2026 (13 Apr)</b>
-    <ul>
-      <li>Financial markets and tourism expected to anchor growth; structural challenges in traditional trade and logistics remain</li>
-      <li>Residential market recovery broadens — mass-market and luxury segments both registering volume and price gains</li>
-      <li>Office leasing demand sustained — West Kowloon anchor lease (~250,000 sq ft) pre-committed by a banking &amp; finance tenant in March, per JLL data</li>
-      <li>Key risk flagged: US tariff escalation and Middle East geopolitical tensions adding near-term uncertainty to trade momentum</li>
-    </ul>
-  </li>
-  <li><b>HK Monetary Authority — Interest Rate Environment Remains Supportive</b>
-    <ul>
-      <li>1-month HIBOR stabilised at ~2.3% — well below the 2023–2024 peak, reducing mortgage cost burden for buyers and developers</li>
-      <li>Lower financing costs continuing to support both primary residential sales velocity and commercial property investment volumes</li>
-    </ul>
-  </li>
-</ul>
+<main>
 
-<!-- ============================================================ -->
-<h2>Hong Kong Market News</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>CBRE: Hong Kong Residential Has Bottomed; 2026 Price Forecast +3–5% (16 Apr)</b>
-    <ul>
-      <li>Feb 2026 private home price index: <b>307.6</b>, +1.6% MoM, +7.7% YoY, +2.6% YTD — broad-based recovery, not speculative</li>
-      <li>CBRE 2026 forecasts: mass-market +3–5%; older stock (45+ yr) ~+1%; luxury 0–+5%; rents +2–3%</li>
-      <li>Transaction forecast: 65,000–70,000 units in 2026 (~+10% YoY from ~64,000 in 2025); primary &gt;20,000 units; secondary &gt;45,000 units</li>
-      <li>Negative equity cases declined from 31,449 (Sep 2025) to <b>21,304</b> (Dec 2025) — ~32% reduction, a sign of balance sheet repair</li>
-      <li>Demand drivers: end-users shifting from rent to buy as negative carry emerges; upgraders active as price gap between small/large flats narrows; investors returning for yield</li>
-    </ul>
-  </li>
-  <li><b>CCL (Centa City Leading Index) — Week of 13–19 Apr Data Released 24 Apr</b>
-    <ul>
-      <li>CCL: <b>153.72</b> — +0.03% WoW, +1.88% MoM</li>
-      <li>NT East leads all sub-indices: <b>+1.78% WoW, +2.85% MoM</b> to 169.03 — the outperformer sub-market</li>
-      <li>Large/Medium unit index: 153.87 (+0.25% WoW); Large unit index: 152.95 (+1.09% WoW); Large estate index: 155.45 (+0.45% WoW)</li>
-      <li>By region: HK Island 155.56 (+0.42% WoW); Kowloon 152.47 (+0.16% WoW); NT West 140.86 (+0.37% WoW)</li>
-    </ul>
-  </li>
-  <li><b>Cushman &amp; Wakefield: Q1 2026 HK Capital Markets — HK$13.7bn Non-Residential Deal Volume (14 Apr)</b>
-    <ul>
-      <li>Office sector: <b>51%</b> of total volume; hotel/rental housing: <b>33%</b>; mixed-use/retail/other: remainder</li>
-      <li>Local end-user and long-term investment buyers dominated — no mention of significant cross-border or mainland buyer activity in Q1 block deals</li>
-      <li>Lower financing costs and attractive pricing cited as key drivers of continued positive investment activity</li>
-    </ul>
-  </li>
-  <li><b>JLL Hong Kong Monthly — West Kowloon Banking Anchor Lease; China Mobile HQ Occupies (16 Apr)</b>
-    <ul>
-      <li>West Kowloon: ~<b>250,000 sq ft</b> long-term anchor lease pre-committed by a banking &amp; finance tenant — sustained confidence in HK's Grade-A office market</li>
-      <li>China Mobile Global Smart Hub officially occupied — contributing to occupier demand in emerging commercial nodes</li>
-    </ul>
-  </li>
-  <li><b>Notable Transactions — Kowloon East Office Tower Placed on Market; C&amp;W Q1 Deal Volume Breakdown (Mingtiandi, C&amp;W, 14 Apr)</b>
-    <ul>
-      <li><b>Kowloon East Grade-A Office Tower</b>: An entire office tower in Kowloon East listed for sale via expressions of interest — guide price ~<b>HK$2.2bn</b>, reflecting investors' continued appetite for non-CBD assets at corrected pricing</li>
-      <li><b>C&amp;W Q1 Capital Markets breakdown</b>: Office 51% of total HK$13.7bn volume; hotel/rental housing 33%; mixed-use/retail/other remainder — <b>local HK end-users and long-term investors dominated Q1 buying</b>, cross-border/international capital not yet a significant volume driver</li>
-      <li><b>West Kowloon pre-commitment</b>: JLL confirmed a large banking &amp; finance tenant committed to ~250,000 sq ft in West Kowloon in March — the largest single pre-commitment in HK's Grade-A office market so far in 2026</li>
-    </ul>
-  </li>
-</ul>
+  <!-- ══════════════════════════════════════════
+       SECTION 1 — BI-WEEKLY SNAPSHOT
+  ══════════════════════════════════════════ -->
+  <div class="section-header">
+    <div class="section-title">Bi-Weekly Snapshot</div>
+    <div class="section-badge">Bi-Weekly</div>
+  </div>
+  <p class="section-sub">Key metrics for April estimated vs. year-to-date monthly average and historical averages</p>
 
-<!-- ============================================================ -->
-<h2>Major Market Transactions</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>Hong Kong — Investment Sales Market (Mingtiandi, C&amp;W, Colliers, Apr 2026)</b>
-    <ul>
-      <li><b>Kowloon East office tower</b>: Entire Grade-A office tower listed for sale (EOI) — guide price ~<b>HK$2.2bn</b>; showcases continued non-CBD office liquidity at repriced levels</li>
-      <li><b>C&amp;W Q1 2026 HK Capital Markets</b>: Non-residential deal volume HK$13.7bn; sector split — office 51%, hotel/rental housing 33%, mixed-use/retail 16%; <b>local HK buyers dominated</b>, cross-border/international capital not yet a major Q1 volume driver</li>
-      <li><b>West Kowloon anchor lease</b>: Banking &amp; finance tenant pre-committed ~250,000 sq ft in West Kowloon (March deal, confirmed by JLL Apr 16) — strong endorsement of Grade-A office demand from financial sector</li>
-      <li><b>C&amp;W vs. CBre data divergence</b>: C&amp;W Q1 volume HK$13.7bn vs. CBRE estimate HK$12.3bn — methodological differences (C&amp;W captures smaller-lot transactions at lower threshold); actual market broadly consistent at ~HK$12–14bn for the quarter</li>
-    </ul>
-  </li>
-  <li><b>China — Institutional Capital Flows (Colliers, Mingtiandi, Apr 2026)</b>
-    <ul>
-      <li><b>CK Hutchison × Goldman Sachs joint venture</b>: CK Hutchison group companies + Goldman Sachs collaborating to invest in China commercial property assets — strong signal of renewed international long-term capital confidence in Chinese core assets at current valuation levels</li>
-      <li><b>Colliers Q1 China commercial real estate</b>: Major-city block transaction market active in Shanghai, Beijing and Shenzhen; institutional capital deployment into logistics parks, mixed-use urban complexes, and tech-park assets; C-REIT pipeline expanding with 15 filings totalling <b>RMB 46.1bn</b></li>
-      <li><b>Outlet (奥莱) REITs concentration</b>: Capital and footfall consolidating around head operators — 华夏首创 and 中金唯品会 outlet REITs outperformed; top six outlet groups hold &gt;30% market share; institutional preference for scale and operator quality intensifying</li>
-    </ul>
-  </li>
-</ul>
+  <div class="weekly-wrapper">
+    <div class="weekly-meta">
+      <span class="weekly-meta-label">Data Period</span>
+      <span class="weekly-meta-date"> <span id="weekLabel">—</span> &nbsp;·&nbsp; Updated <span id="updateDate">—</span></span>
+    </div>
+    <table class="weekly-table">
+      <thead>
+        <tr>
+          <th style="width:30%">Metric</th>
+          <th>April Estimated</th>
+          <th>2026 YTD Monthly Avg<sup>1</sup></th>
+          <th>2025 Avg</th>
+          <th>2024 Avg</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- ── BEIJING ── -->
+        <tr class="group-header">
+          <td colspan="5">Beijing — Whole City</td>
+        </tr>
+        <tr class="sub-header">
+          <td colspan="5">Primary Market (New Homes)</td>
+        </tr>
+        <tr>
+          <td>GFA Sold (m²)</td>
+          <td id="bj_pri_gfa_week" class="val-neutral">—</td>
+          <td id="bj_pri_gfa_ytd" class="val-neutral">—</td>
+          <td id="bj_pri_gfa_25" class="val-neutral">—</td>
+          <td id="bj_pri_gfa_24" class="val-neutral">—</td>
+        </tr>
+        <tr>
+          <td>Inventory Month</td>
+          <td id="bj_pri_inv_week" class="val-neutral">—</td>
+          <td id="bj_pri_inv_ytd" class="val-neutral">—</td>
+          <td id="bj_pri_inv_25" class="val-neutral">—</td>
+          <td id="bj_pri_inv_24" class="val-neutral">—</td>
+        </tr>
+        <tr class="sub-header">
+          <td colspan="5">Secondary Market (Resale)</td>
+        </tr>
+        <tr>
+          <td>GFA Sold (m²)</td>
+          <td id="bj_sec_gfa_week" class="val-neutral">—</td>
+          <td id="bj_sec_gfa_ytd" class="val-neutral">—</td>
+          <td id="bj_sec_gfa_25" class="val-neutral">—</td>
+          <td id="bj_sec_gfa_24" class="val-neutral">—</td>
+        </tr>
+        <tr>
+          <td>Avg Unit Price (RMB/m²)</td>
+          <td id="bj_sec_price_week" class="val-neutral">—</td>
+          <td id="bj_sec_price_ytd" class="val-neutral">—</td>
+          <td id="bj_sec_price_25" class="val-neutral">—</td>
+          <td id="bj_sec_price_24" class="val-neutral">—</td>
+        </tr>
 
-<!-- ============================================================ -->
-<h2>China Macro News</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>PBOC Holds LPR Steady for 11th Consecutive Month — Policy Enters "Observation Period" (20 Apr)</b>
-    <ul>
-      <li>1-year LPR: <b>3.0%</b>; over-5-year LPR: <b>3.5%</b> — unchanged across all tenors</li>
-      <li>Rationale: commercial bank NIM at historical low of <b>1.42%</b> (Q4 2025); limited scope for further quotation cuts; Q1 GDP +5.0% YoY reducing urgency for broad easing</li>
-      <li>Fed rate-cut cycle stalled and Middle East geopolitical tensions driving imported inflation risk — constraining PBOC's room to move</li>
-      <li>Policy shift: PBOC now in "observation period", pivoting from broad easing to <b>targeted structural tools</b> (tech innovation, consumption, SME support)</li>
-      <li>Outlook: analyst (Wang Qing / Golden Credit) expects <b>10–20bp of targeted cuts</b> in H2 2026 if US tariff drag on exports materialises; over-5-year LPR reduction flagged as the preferred policy lever to support the property market</li>
-    </ul>
-  </li>
-  <li><b>China Formalises National "Ready Property" Sales System — Prescriptive Period Ends 1 Apr</b>
-    <ul>
-      <li>As of <b>1 April 2026</b>, all newly granted residential land across China must be sold on a completed-unit (现房) basis — effectively ending ~30 years of off-plan pre-sale (预售) for new projects</li>
-      <li>Policy applies on a "new-old split" basis: projects with existing land rights and commenced construction may continue under the pre-sale regime, but with <b>full pre-sale fund supervision</b> (dedicated bank account + closed-loop management)</li>
-      <li>City-tier differentiation: high-inventory cities required to accelerate ready-property transition; supply-constrained Tier-1 cities allowed a more gradual shift to avoid triggering sudden supply shock</li>
-      <li>MNRI Circular No. 38 (自然资源部文): new construction land to prioritise major projects and livelihood needs; commercial housing development "in principle not permitted" for new land grants</li>
-      <li>Investment implication: reduces developer leverage risk and buyer completion risk; front-loads capex requirement — structurally favourable for state-owned and well-capitalised developers, negative for cash-constrained private SME builders</li>
-    </ul>
-  </li>
-</ul>
+        <!-- ── FZS ── -->
+        <tr class="group-header fzs">
+          <td colspan="5">FZS (分钟寺) — Submarket</td>
+        </tr>
+        <tr class="sub-header">
+          <td colspan="5">Primary Market (New Homes)</td>
+        </tr>
+        <tr>
+          <td>GFA Sold (m²)</td>
+          <td id="fzs_pri_gfa_week" class="val-neutral">—</td>
+          <td id="fzs_pri_gfa_ytd" class="val-neutral">—</td>
+          <td id="fzs_pri_gfa_25" class="val-neutral">—</td>
+          <td id="fzs_pri_gfa_24" class="val-neutral">—</td>
+        </tr>
+        <tr>
+          <td>Inventory Month</td>
+          <td id="fzs_pri_inv_week" class="val-neutral">—</td>
+          <td id="fzs_pri_inv_ytd" class="val-neutral">—</td>
+          <td id="fzs_pri_inv_25" class="val-neutral">—</td>
+          <td id="fzs_pri_inv_24" class="val-neutral">—</td>
+        </tr>
+        <tr class="sub-header">
+          <td colspan="5">Secondary Market (Resale)</td>
+        </tr>
+        <tr>
+          <td>GFA Sold (m²)</td>
+          <td id="fzs_sec_gfa_week" class="val-neutral">—</td>
+          <td id="fzs_sec_gfa_ytd" class="val-neutral">—</td>
+          <td id="fzs_sec_gfa_25" class="val-neutral">—</td>
+          <td id="fzs_sec_gfa_24" class="val-neutral">—</td>
+        </tr>
+        <tr>
+          <td>Avg Unit Price (RMB/m²)</td>
+          <td id="fzs_sec_price_week" class="val-neutral">—</td>
+          <td id="fzs_sec_price_ytd" class="val-neutral">—</td>
+          <td id="fzs_sec_price_25" class="val-neutral">—</td>
+          <td id="fzs_sec_price_24" class="val-neutral">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="padding:0.6rem 1.5rem;font-size:0.68rem;color:var(--muted);border-top:1px solid var(--border);background:var(--paper);">
+      <sup>1</sup> 2026 YTD Monthly Avg — as of March 31, 2026<br>
+      <sup>2</sup> Inventory Month — Latest inventory / Last 6 months monthly GFA sold average
+    </div>
+  </div>
 
-<!-- ============================================================ -->
-<h2>China Market News</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>"Xiaoyangchun" Rally Extends into April — Beijing &amp; Shanghai Maintain Momentum (People.com, 20 Apr)</b>
-    <ul>
-      <li>Beijing: new home signings to 18 April maintained above the March daily average — sustained buyer interest entering Q2</li>
-      <li>Shanghai: front-line sales offices in Qiantan area continued to report elevated foot traffic (~600 groups during the Qingming holiday, ~2,000 cumulative since late March)</li>
-      <li>Guangzhou: April activity described as "notably active" by CCTV; Pearl River New City showrooms back to full operational pace</li>
-      <li>Upward price pressure emerging in select Tier-1 sub-markets: Beijing 3rd Ring high-quality secondary — bargaining room narrowed from 10% to &lt;3%; some school-district and upgrade-type owners raising asking prices</li>
-    </ul>
-  </li>
-  <li><b>Commercial C-REIT Market — Pipeline Expands Rapidly; 15 Projects Filed, RMB 46.1bn Target (13 Apr, China Securities Journal)</b>
-    <ul>
-      <li>As of 1 April 2026, Shanghai and Shenzhen exchanges have received <b>15 commercial real estate C-REIT applications</b> with a combined target issuance of <b>RMB 46.1bn</b> — nearly equal to the full-year 2025 public REITs issuance total</li>
-      <li>Notable milestone: <b>创金合信北京国资商业REIT</b> (Chuanging Hexin Beijing State Asset Commercial REIT) filed and accepted — the first "urban renewal + technology innovation" asset combination under the commercial REIT framework</li>
-      <li>Valuation discipline tightening: 砂之船商业不动产REIT (Sasseur Commercial REIT) received full-cycle feedback — valuations trimmed across the board: total value RMB 5.028bn (from RMB 5.064bn); occupancy 94% (from 98%); income growth rate 2.5% (from 3%); collection rate 99% (from 100%)</li>
-      <li>Outlet (奥莱) sector: capital and footfall concentrating on head operators; 华夏首创 and 中金唯品会 outlet REITs outperformed; top six outlet groups hold &gt;30% market share — institutional preference for scale and operator quality intensifying</li>
-      <li>Investment guidance: focus on projects with occupancy &gt;95%, renewal rate &gt;85%, and distribution yield &gt;5%; avoid portfolios with heavy near-term lease expiry, aggressive operational assumptions, or co-owned competition dynamics</li>
-    </ul>
-  </li>
-  <li><b>Goldman Sachs Reiterates Bullish Tier-1 Call: Shanghai &amp; Shenzhen to Bottom Late-2026, +15% by 2028</b>
-    <ul>
-      <li>GS maintained its revised outlook following Q1 data — Shanghai and Shenzhen to bottom ~6–24 months ahead of other Tier-1/2 cities; Beijing to bottom early-2027; Guangzhou recovery slower and shallower</li>
-      <li>Core thesis: constrained new supply (Shenzhen 2026 residential land: only 90 ha vs 365 ha in 2022, a -75% reduction), low inventory, upgrade demand accumulation, and ongoing policy easing</li>
-      <li>Risks: H2 2026 export headwinds from US tariff escalation could delay broader consumer confidence recovery</li>
-    </ul>
-  </li>
-</ul>
+  <!-- ══════════════════════════════════════════
+       SECTION 2 — MONTHLY TRENDS
+  ══════════════════════════════════════════ -->
+  <div class="section-header" style="margin-top:3rem;">
+    <div class="section-title">Monthly Trends</div>
+    <div class="section-badge">Monthly</div>
+  </div>
+  <p class="section-sub">Beijing & FZS historical monthly data — Jan 2024 to Apr 2026 (Apr-26 estimated)</p>
 
-<!-- ============================================================ -->
-<h2>Capital Markets &amp; Fund Flows</h2>
-<!-- ============================================================ -->
-<ul>
-  <li><b>APREA China Spring Conference — Key Themes: C-REIT Diversification, International Capital Re-engagement (29 Apr, Shanghai)</b>
-    <ul>
-      <li>Former Ascendas-Singbridge / Temasek executive Hank (name truncated) confirmed as speaker — signals renewed Singapore/Temasek capital interest in China commercial REITs</li>
-      <li>Conference agenda highlights: C-REIT expansion beyond infrastructure; urban renewal and technology park assets as next REIT-able categories; GP/LP dynamics in China's evolving private real estate capital market</li>
-    </ul>
-  </li>
-  <li><b>Hong Kong Q1 2026 Investment Volumes — Mixed Signals vs. C&amp;W Data</b>
-    <ul>
-      <li>C&amp;W MarketBeat (14 Apr): non-residential deal volume &gt;HK$100mn at <b>HK$13.7bn</b> for Q1 — dominated by local end-users and long-term investors</li>
-      <li>Prior CBRE estimate for Q1 HK investment volumes was <b>HK$12.3bn</b> — two agencies using slightly different methodology (C&amp;W includes smaller lot transactions at lower threshold)</li>
-      <li>Cross-border (international + mainland) capital not yet a significant volume driver in Q1 block deals — local HK end-users absorbing the bulk of available stock</li>
-    </ul>
-  </li>
-</ul>
+  <!-- Year colour legend -->
+  <div class="year-legend">
+    <div class="year-legend-item"><span class="year-swatch" style="background:rgba(180,180,180,0.55);border:1.5px solid #999"></span>2024</div>
+    <div class="year-legend-item"><span class="year-swatch" style="background:rgba(201,168,76,0.45);border:1.5px solid #c9a84c"></span>2025</div>
+    <div class="year-legend-item"><span class="year-swatch" style="background:rgba(44,82,130,0.45);border:1.5px solid #2c5282"></span>2026</div>
+    <span style="margin-left:0.4rem;font-size:0.67rem;opacity:0.7">· Bar colour by year</span>
+  </div>
 
-<div class="note">
-<i>Sources: DBS Economics, HKU Faculty of Business &amp; Economics, CBRE Hong Kong, JLL Hong Kong, Cushman &amp; Wakefield, Centa City Leading Index, PBOC/NFSPC, NBS China, 人民网/CCTV, 新华财经/中国证券报, 21世纪经济报道, Goldman Sachs Research, Mingtiandi, APREA. Data as of 26 April 2026. This report is for informational purposes only.</i>
-</div>
+  <!-- ── PRIMARY ── -->
+  <div class="market-section" id="sec-primary">
+    <div class="market-label">Primary Transaction (New Homes)</div>
+    <div class="monthly-grid">
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot"></span>BJ Monthly — GFA Sold (m²) &amp; Inventory Month</div>
+        <div class="chart-wrap">
+          <canvas id="bjPriChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot red"></span>FZS Monthly — GFA Sold (m²) &amp; Inventory Month</div>
+        <div class="chart-wrap">
+          <canvas id="fzsPriChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- ── SECONDARY ── -->
+  <div class="market-section" id="sec-secondary">
+    <div class="market-label">Secondary Transaction (Resale)</div>
+    <div class="monthly-grid">
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot blue"></span>BJ Monthly — GFA Sold (m²) &amp; Avg Price</div>
+        <div class="chart-wrap">
+          <canvas id="bjSecChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><span class="dot red"></span>FZS Monthly — GFA Sold (m²) &amp; Avg Price</div>
+        <div class="chart-wrap">
+          <canvas id="fzsSecChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div><strong>Sources:</strong> BJ Statistics Survey Office (new homes) · CREIS (FZS submarket) · BJ Daily Tracker</div>
+  <div><strong>Note:</strong> FZS = 分钟寺 vicinity submarket. Chinese convention: Red = increase, Green = decrease.</div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  DATA — Fill from Excel backup or update via script
+//  All values prefixed: bj_ = Beijing, fzs_ = FZS submarket
+//  Suffixes: _week, _ytd, _25, _24
+// ════════════════════════════════════════════════════════════
+
+const WEEKLY = {
+  meta: {
+    weekLabel:  "Apr 1 – 19, 2026 (Estimated)",
+    updateDate: "2026-04-19"
+  },
+  bj: {
+    pri_gfa:   { week: 451108,  ytd: 274475,  avg25: 362430,  avg24: 405717  },
+    pri_inv:   { week: 30.9,    ytd: 30.9,    avg25: 23.7,    avg24: 24.3    },
+    sec_gfa:   { week: 1610709, ytd: 1158957, avg25: 1280296, avg24: 1305065 },
+    sec_price: { week: 40535,   ytd: 39990,   avg25: 45317,   avg24: 49985   }
+  },
+  fzs: {
+    pri_gfa:   { week: 7665,  ytd: 5400,   avg25: 10617,  avg24: 9925   },
+    pri_inv:   { week: 47.6,  ytd: 47.9,   avg25: 28.0,   avg24: 15.8   },
+    sec_gfa:   { week: 21423, ytd: 14885,  avg25: 16818,  avg24: 17282  },
+    sec_price: { week: 36301, ytd: 36368,  avg25: 42905,  avg24: 50072  }
+  }
+};
+
+// ── Monthly Series ──
+const bjPrimary = {
+  labels: ['Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24',
+           'Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+           'Jan-26','Feb-26','Mar-26','Apr-26*'],
+  gfa:    [249389,342478,310931,333380,417335,387738,352167,277065,575923,555019,661459,
+           324155,236349,460185,430883,379993,447114,315080,323585,400116,376005,265722,389975,
+           292662,134464,396300,451108],
+  invMo:  [null,null,null,null,null,27.2,25.9,28.0,24.3,21.7,18.6,
+           18.8,19.5,18.9,20.8,23.5,25.8,26.0,25.1,25.8,25.0,27.5,28.0,
+           28.1,31.9,32.8,30.9],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,
+           null,null,null,null,null,null,null,null,null,null,null,null,
+           null,null,null,null]
+};
+
+const fzsPrimary = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24',
+           'Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+           'Jan-26','Feb-26','Mar-26','Apr-26*'],
+  gfa:    [8800,6400,8200,10100,8700,12200,8300,7900,6500,10000,10300,21700,
+           4300,5600,12100,24800,14200,14200,10200,9300,9300,6600,8100,8700,
+           3500,5000,7700,7665],
+  inv:    [182273,175873,167673,157573,148873,136673,128373,120473,113973,103973,216273,194573,
+           238273,232673,252973,339373,346473,353573,343373,334073,365373,358773,353373,344673,
+           341173,336173,328473,322308],
+  invMo:  [null,null,null,null,null,null,null,13.0,12.7,11.6,23.5,18.0,
+           23.6,23.9,23.7,25.8,25.1,28.2,25.4,23.6,26.7,33.7,36.7,39.6,
+           45.0,49.0,49.8,47.6],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,
+           null,null,null,null,null,null,null,null,null,null,null,null,
+           null,null,null,null]
+};
+
+const bjSec = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24',
+           'Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+           'Jan-26','Feb-26','Mar-26'],
+  gfa:    [1093983,556960,1242498,1161097,1190915,1341448,1390716,1292171,1190242,1498454,1673683,2028610,
+           1174894,1076194,1735493,1433421,1319337,1413335,1179854,1240107,1255532,1030882,1165850,1338652,
+           1205319,660842,1610709],
+  price:  [53129,53498,52028,49431,47868,50236,49690,49715,47370,47162,49059,50628,
+           50669,49382,49718,47824,46177,46361,44654,43806,43609,41751,41059,38790,
+           38989,40445,40535],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,
+           -0.0463,-0.0769,-0.0444,-0.0325,-0.0353,-0.0771,-0.1013,-0.1189,-0.0794,-0.1147,-0.163,-0.2338,
+           -0.2305,-0.181,-0.1847]
+};
+
+const fzsSec = {
+  labels: ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24',
+           'Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
+           'Jan-26','Feb-26','Mar-26'],
+  gfa:    [18688,9075,13656,15231,17200,13052,15626,17357,15624,20663,23001,28209,
+           16047,13266,21547,18180,20471,16627,17631,14000,15942,15205,14648,18254,
+           15047,8185,21423],
+  price:  [55863,68309,50811,51932,49059,43331,43843,47609,44932,46533,49998,48641,
+           46184,46374,45975,44229,42963,45415,43526,42366,38917,39620,42981,36306,
+           35666,37137,36301],
+  yoy:    [null,null,null,null,null,null,null,null,null,null,null,null,
+           -0.1733,-0.3211,-0.0952,-0.1483,-0.1243,0.0481,-0.0072,-0.1101,-0.1339,-0.1486,-0.1403,-0.2536,
+           -0.2277,-0.1992,-0.2104]
+};
+
+// ════════════════════════════════════════════════════════════
+//  RENDER WEEKLY TABLE
+// ════════════════════════════════════════════════════════════
+document.getElementById('weekLabel').textContent   = WEEKLY.meta.weekLabel;
+document.getElementById('updateDate').textContent  = WEEKLY.meta.updateDate;
+
+function fmtNum(v, prefix, suffix) {
+  if (v == null || v === '') return '<span class="val-empty">—</span>';
+  const n = typeof v === 'number' ? v : parseFloat(v);
+  if (isNaN(n)) return '<span class="val-empty">—</span>';
+  return (prefix || '') + n.toLocaleString() + (suffix || '');
+}
+
+function populateCell(id, val, prefix, suffix) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = fmtNum(val, prefix, suffix);
+}
+
+// Beijing
+populateCell('bj_pri_gfa_week',   WEEKLY.bj.pri_gfa.week);
+populateCell('bj_pri_gfa_ytd',    WEEKLY.bj.pri_gfa.ytd);
+populateCell('bj_pri_gfa_25',     WEEKLY.bj.pri_gfa.avg25);
+populateCell('bj_pri_gfa_24',     WEEKLY.bj.pri_gfa.avg24);
+
+populateCell('bj_pri_inv_week',   WEEKLY.bj.pri_inv.week,  '', ' mo');
+populateCell('bj_pri_inv_ytd',    WEEKLY.bj.pri_inv.ytd,   '', ' mo');
+populateCell('bj_pri_inv_25',     WEEKLY.bj.pri_inv.avg25, '', ' mo');
+populateCell('bj_pri_inv_24',     WEEKLY.bj.pri_inv.avg24, '', ' mo');
+
+populateCell('bj_sec_gfa_week',   WEEKLY.bj.sec_gfa.week);
+populateCell('bj_sec_gfa_ytd',    WEEKLY.bj.sec_gfa.ytd);
+populateCell('bj_sec_gfa_25',     WEEKLY.bj.sec_gfa.avg25);
+populateCell('bj_sec_gfa_24',     WEEKLY.bj.sec_gfa.avg24);
+
+populateCell('bj_sec_price_week', WEEKLY.bj.sec_price.week,  '¥');
+populateCell('bj_sec_price_ytd',  WEEKLY.bj.sec_price.ytd,   '¥');
+populateCell('bj_sec_price_25',   WEEKLY.bj.sec_price.avg25, '¥');
+populateCell('bj_sec_price_24',   WEEKLY.bj.sec_price.avg24, '¥');
+
+// FZS
+populateCell('fzs_pri_gfa_week',   WEEKLY.fzs.pri_gfa.week);
+populateCell('fzs_pri_gfa_ytd',    WEEKLY.fzs.pri_gfa.ytd);
+populateCell('fzs_pri_gfa_25',     WEEKLY.fzs.pri_gfa.avg25);
+populateCell('fzs_pri_gfa_24',     WEEKLY.fzs.pri_gfa.avg24);
+
+populateCell('fzs_pri_inv_week',   WEEKLY.fzs.pri_inv.week,  '', ' mo');
+populateCell('fzs_pri_inv_ytd',    WEEKLY.fzs.pri_inv.ytd,   '', ' mo');
+populateCell('fzs_pri_inv_25',     WEEKLY.fzs.pri_inv.avg25, '', ' mo');
+populateCell('fzs_pri_inv_24',     WEEKLY.fzs.pri_inv.avg24, '', ' mo');
+
+populateCell('fzs_sec_gfa_week',   WEEKLY.fzs.sec_gfa.week);
+populateCell('fzs_sec_gfa_ytd',    WEEKLY.fzs.sec_gfa.ytd);
+populateCell('fzs_sec_gfa_25',     WEEKLY.fzs.sec_gfa.avg25);
+populateCell('fzs_sec_gfa_24',     WEEKLY.fzs.sec_gfa.avg24);
+
+populateCell('fzs_sec_price_week', WEEKLY.fzs.sec_price.week,  '¥');
+populateCell('fzs_sec_price_ytd',  WEEKLY.fzs.sec_price.ytd,   '¥');
+populateCell('fzs_sec_price_25',   WEEKLY.fzs.sec_price.avg25, '¥');
+populateCell('fzs_sec_price_24',   WEEKLY.fzs.sec_price.avg24, '¥');
+
+// ════════════════════════════════════════════════════════════
+//  CHART DEFAULTS
+// ════════════════════════════════════════════════════════════
+const gold  = '#c9a84c', goldA  = 'rgba(201,168,76,0.45)';
+const red   = '#c94040', redA   = 'rgba(201,64,64,0.15)';
+const blue  = '#2c5282', blueA  = 'rgba(44,82,130,0.45)';
+const green = '#3a7d5a', greenA = 'rgba(58,125,90,0.15)';
+const muted = '#7a7467';
+
+// Year colours: 2024 = grey, 2025 = gold, 2026 = blue
+const Y2024_BG = 'rgba(160,155,148,0.45)';
+const Y2024_BD = 'rgba(130,125,118,0.9)';
+const Y2025_BG = 'rgba(201,168,76,0.45)';
+const Y2025_BD = '#c9a84c';
+const Y2026_BG = 'rgba(44,82,130,0.55)';
+const Y2026_BD = '#2c5282';
+
+// Helper: given a label like 'Mar-25' or 'Apr-26*', return year colour
+function barBg(lbl, baseA) {
+  if (!lbl) return baseA;
+  if (lbl.includes('26') || lbl.endsWith('26*')) return Y2026_BG;
+  if (lbl.includes('25')) return Y2025_BG;
+  if (lbl.includes('24')) return Y2024_BG;
+  return baseA;
+}
+function barBd(lbl, baseC) {
+  if (!lbl) return baseC;
+  if (lbl.includes('26') || lbl.endsWith('26*')) return Y2026_BD;
+  if (lbl.includes('25')) return Y2025_BD;
+  if (lbl.includes('24')) return Y2024_BD;
+  return baseC;
+}
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = muted;
+Chart.defaults.plugins.legend.display = false;
+
+const gridColor = '#e8e4db';
+
+// ── BJ PRIMARY: GFA (bar) + Inventory Month (line) ──
+new Chart(document.getElementById('bjPriChart'), {
+  type: 'bar',
+  data: {
+    labels: bjPrimary.labels,
+    datasets: [
+      {
+        label: 'GFA Sold (m²)',
+        data: bjPrimary.gfa,
+        backgroundColor: bjPrimary.labels.map(l => barBg(l, goldA)),
+        borderColor:     bjPrimary.labels.map(l => barBd(l, gold)),
+        borderWidth: 1.5, yAxisID: 'y'
+      },
+      {
+        label: 'Inv Month', data: bjPrimary.invMo,
+        type: 'line', borderColor: red, backgroundColor: 'transparent',
+        borderWidth: 2, pointRadius: 4, pointBackgroundColor: red,
+        yAxisID: 'y1', tension: 0.3, spanGaps: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 10 }, color: muted, boxWidth: 10 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw?.toLocaleString()} m²` : `Inv Month: ${c.raw}mo` } }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: gridColor }, ticks: { callback: v => (v/1000).toFixed(0)+'k', font: { size: 9 } }, title: { display: true, text: 'GFA m²', font: { size: 9 } } },
+      y1: { position: 'right', grid: { display: false }, min: 0, max: 55, ticks: { callback: v => v+'mo', font: { size: 9 } }, title: { display: true, text: 'Inv Months', font: { size: 9 } } }
+    }
+  }
+});
+
+// ── FZS PRIMARY: GFA (bar) + Inventory Month (line) ──
+new Chart(document.getElementById('fzsPriChart'), {
+  type: 'bar',
+  data: {
+    labels: fzsPrimary.labels,
+    datasets: [
+      {
+        label: 'GFA Sold (m²)',
+        data: fzsPrimary.gfa,
+        backgroundColor: fzsPrimary.labels.map(l => barBg(l, redA)),
+        borderColor:     fzsPrimary.labels.map(l => barBd(l, red)),
+        borderWidth: 1.5, yAxisID: 'y'
+      },
+      {
+        label: 'Inv Month', data: fzsPrimary.invMo,
+        type: 'line', borderColor: red, backgroundColor: 'transparent',
+        borderWidth: 2, pointRadius: 3, pointBackgroundColor: red,
+        yAxisID: 'y1', tension: 0.3, spanGaps: false
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 10 }, color: muted, boxWidth: 10 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw?.toLocaleString()} m²` : `Inv Month: ${c.raw}mo` } }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: gridColor }, ticks: { callback: v => v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'GFA m²', font: { size: 9 } } },
+      y1: { position: 'right', grid: { display: false }, min: 0, max: 55, ticks: { callback: v => v+'mo', font: { size: 9 } }, title: { display: true, text: 'Inv Months', font: { size: 9 } } }
+    }
+  }
+});
+
+// ── BJ SECONDARY: GFA (bar) + Avg Price (line) ──
+new Chart(document.getElementById('bjSecChart'), {
+  type: 'bar',
+  data: {
+    labels: bjSec.labels,
+    datasets: [
+      {
+        label: 'GFA Sold (m²)',
+        data: bjSec.gfa,
+        backgroundColor: bjSec.labels.map(l => barBg(l, blueA)),
+        borderColor:     bjSec.labels.map(l => barBd(l, blue)),
+        borderWidth: 1.5, yAxisID: 'y'
+      },
+      {
+        label: 'Avg Price (RMB/m²)', data: bjSec.price,
+        type: 'line', borderColor: red, backgroundColor: 'transparent',
+        borderWidth: 2.5, pointRadius: 2, yAxisID: 'y1', tension: 0.3
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 10 }, color: muted, boxWidth: 10 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw?.toLocaleString()} m²` : `¥${c.raw?.toLocaleString()}/m²` } }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: gridColor }, ticks: { callback: v => (v/1000).toFixed(0)+'k', font: { size: 9 } }, title: { display: true, text: 'GFA m²', font: { size: 9 } } },
+      y1: { position: 'right', grid: { display: false }, min: 35000, ticks: { callback: v => '¥'+v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'RMB/m²', font: { size: 9 } } }
+    }
+  }
+});
+
+// ── FZS SECONDARY: GFA (bar) + Avg Price (line) ──
+new Chart(document.getElementById('fzsSecChart'), {
+  type: 'bar',
+  data: {
+    labels: fzsSec.labels,
+    datasets: [
+      {
+        label: 'GFA Sold (m²)',
+        data: fzsSec.gfa,
+        backgroundColor: fzsSec.labels.map(l => barBg(l, redA)),
+        borderColor:     fzsSec.labels.map(l => barBd(l, red)),
+        borderWidth: 1.5, yAxisID: 'y'
+      },
+      {
+        label: 'Avg Price (RMB/m²)', data: fzsSec.price,
+        type: 'line', borderColor: red, backgroundColor: 'transparent',
+        borderWidth: 2.5, pointRadius: 2, yAxisID: 'y1', tension: 0.3
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top', labels: { font: { size: 10 }, color: muted, boxWidth: 10 } },
+      tooltip: { callbacks: { label: (c) => c.datasetIndex === 0 ? `GFA: ${c.raw?.toLocaleString()} m²` : `¥${c.raw?.toLocaleString()}/m²` } }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 9 } } },
+      y: { grid: { color: gridColor }, ticks: { callback: v => v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'GFA m²', font: { size: 9 } } },
+      y1: { position: 'right', grid: { display: false }, min: 28000, ticks: { callback: v => '¥'+v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'RMB/m²', font: { size: 9 } } }
+    }
+  }
+});
+</script>
 </body>
 </html>
