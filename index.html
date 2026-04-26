@@ -175,28 +175,31 @@
   }
   .weekly-table tr:last-child td { border-bottom: none; }
   .weekly-table tr:hover td { background: var(--paper); }
+  /* Disable hover for header rows */
+  .weekly-table .group-header:hover td,
+  .weekly-table .sub-header:hover td { background: #c4bfb0; }
 
   /* Market group header row */
   .weekly-table .group-header td {
-    background: var(--ink);
+    background: #c4bfb0;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.7rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: #8a8578;
     padding: 0.5rem 1.2rem;
-    border-bottom: 1px solid rgba(201,168,76,0.3);
+    border-bottom: 1px solid rgba(138,133,120,0.3);
   }
   .weekly-table .group-header.fzs td {
-    background: var(--ink);
-    color: var(--gold);
-    border-bottom: 1px solid rgba(201,168,76,0.3);
+    background: #c4bfb0;
+    color: #8a8578;
+    border-bottom: 1px solid rgba(138,133,120,0.3);
   }
 
   /* Metric category sub-header */
   .weekly-table .sub-header td {
-    background: var(--paper);
+    background: #c4bfb0;
     font-family: 'DM Sans', sans-serif;
     font-size: 0.68rem;
     font-weight: 600;
@@ -355,8 +358,8 @@
       <thead>
         <tr>
           <th style="width:30%">Metric</th>
-          <th>April Estimated</th>
-          <th>2026 YTD Monthly Avg<sup>1</sup></th>
+          <th>April Estimated<sup>1</sup></th>
+          <th>2026 YTD Monthly Avg<sup>2</sup></th>
           <th>2025 Avg</th>
           <th>2024 Avg</th>
         </tr>
@@ -377,7 +380,7 @@
           <td id="bj_pri_gfa_24" class="val-neutral">—</td>
         </tr>
         <tr>
-          <td>Inventory Month</td>
+          <td>Inventory Month<sup>3</sup></td>
           <td id="bj_pri_inv_week" class="val-neutral">—</td>
           <td id="bj_pri_inv_ytd" class="val-neutral">—</td>
           <td id="bj_pri_inv_25" class="val-neutral">—</td>
@@ -416,7 +419,7 @@
           <td id="fzs_pri_gfa_24" class="val-neutral">—</td>
         </tr>
         <tr>
-          <td>Inventory Month</td>
+          <td>Inventory Month<sup>3</sup></td>
           <td id="fzs_pri_inv_week" class="val-neutral">—</td>
           <td id="fzs_pri_inv_ytd" class="val-neutral">—</td>
           <td id="fzs_pri_inv_25" class="val-neutral">—</td>
@@ -442,8 +445,9 @@
       </tbody>
     </table>
     <div style="padding:0.6rem 1.5rem;font-size:0.68rem;color:var(--muted);border-top:1px solid var(--border);background:var(--paper);">
-      <sup>1</sup> 2026 YTD Monthly Avg — as of March 31, 2026<br>
-      <sup>2</sup> Inventory Month — Latest inventory / Last 6 months monthly GFA sold average
+      <sup>1</sup> April Estimated — Estimated monthly figures based on Apr 1 – 19 data<br>
+      <sup>2</sup> 2026 YTD Monthly Avg — as of March 31, 2026<br>
+      <sup>3</sup> Inventory Month — Latest inventory / Last 6 months monthly GFA sold average
     </div>
   </div>
 
@@ -518,7 +522,7 @@
 
 const WEEKLY = {
   meta: {
-    weekLabel:  "Apr 1 – 19, 2026 (Estimated)",
+    weekLabel:  "Apr 1 – 19, 2026",
     updateDate: "2026-04-19"
   },
   bj: {
@@ -832,7 +836,7 @@ new Chart(document.getElementById('fzsSecChart'), {
     scales: {
       x: { grid: { color: gridColor }, ticks: { maxRotation: 45, font: { size: 9 } } },
       y: { grid: { color: gridColor }, ticks: { callback: v => v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'GFA m²', font: { size: 9 } } },
-      y1: { position: 'right', grid: { display: false }, min: 28000, ticks: { callback: v => '¥'+v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'RMB/m²', font: { size: 9 } } }
+      y1: { position: 'right', grid: { display: false }, min: 35000, ticks: { callback: v => '¥'+v.toLocaleString(), font: { size: 9 } }, title: { display: true, text: 'RMB/m²', font: { size: 9 } } }
     }
   }
 });
